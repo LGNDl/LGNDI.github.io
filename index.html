@@ -757,13 +757,13 @@
             email: "your.email@example.com",
             linkedin: "linkedin.com/in/your-profile",
             location: "City, Country",
-            summary: "Motivated Computer Information Systems (CIS) student with strong analytical and problem-solving skills and a passion for technology-driven solutions. Certified Professional Scrum Master (PSM I) with experience in software development projects, database management, and structured systems analysis. Eager to bring agile collaboration expertise, database coordination, and operational design to a collaborative business or technology team.",
+            summary: "Write a brief professional summary highlighting your background, strengths, experience, certifications, and career goals. This section should help employers quickly understand your value and qualifications.",
             education: [
                 {
                     institution: "University Name",
                     degree: "Degree Program",
                     period: "Sep 2023 - Present",
-                    details: "Key coursework: Systems Analysis & Design, Database Management Systems, Agile Project Frameworks, Software Engineering. Actively demonstrated agile collaboration workflows."
+                    details: "Relevant coursework, academic achievements, GPA, honors, extracurricular activities, or notable accomplishments."
                 }
             ],
             certifications: [
@@ -777,7 +777,7 @@
                     title: "Project Name",
                     role: "Systems Analyst & Agile Coordinator",
                     period: "Spring 2025",
-                    details: "Modeled complete data systems architectural flow, entity relationship diagrams (ERD), and relational database schemas. Utilized Agile Scrum framework principles as Scrum Master, hosting stand-ups."
+                    details: "Describe the project objective, your responsibilities, technologies used, methodologies applied, and the outcome achieved."
                 }
             ],
             experiences: [
@@ -785,13 +785,13 @@
                     company: "Organization Name",
                     role: "Agile Team Lead / Organizer",
                     period: "2024 - Present",
-                    details: "Facilitated peer-to-peer workshops. Led cross-functional academic support initiatives using modern tasks/boards."
+                    details: "Describe responsibilities, leadership activities, achievements, measurable results, or contributions made during this role."
                 }
             ],
-            skills: ["Problem Solving", "Analytical Thinking", "Accountability", "Microsoft Office", "Business Analysis", "Project Management", "Leadership", "Agile Management"],
+            skills: ["Skill 1", "Skill 2", "Skill 3", "Skill 4", "Skill 5", "Skill 6"],
             languages: [
-                { name: "Arabic", level: "Native" },
-                { name: "English", level: "Fluent" }
+                { name: "Language 1", level: "Native / Fluent / Advanced" },
+                { name: "Language 2", level: "Native / Fluent / Advanced" }
             ],
             layout: "split", // split, classic, ats
             themeColor: "#047857",
@@ -1141,10 +1141,10 @@
                             <i class="fa-solid fa-trash-can text-xs"></i>
                         </button>
                         <div class="text-[10px] uppercase tracking-wider font-extrabold text-slate-500">School #${index + 1}</div>
-                        <input type="text" value="${edu.institution}" placeholder="Institution" oninput="updateEduField(${index}, 'institution', this.value)" class="w-full bg-slate-900 border border-slate-800 rounded px-2.5 py-1.5 text-xs text-white focus:outline-none focus:border-emerald-500">
-                        <input type="text" value="${edu.degree}" placeholder="Degree Details" oninput="updateEduField(${index}, 'degree', this.value)" class="w-full bg-slate-900 border border-slate-800 rounded px-2.5 py-1.5 text-xs text-white focus:outline-none focus:border-emerald-500">
-                        <input type="text" value="${edu.period}" placeholder="Time Period" oninput="updateEduField(${index}, 'period', this.value)" class="w-full bg-slate-900 border border-slate-800 rounded px-2.5 py-1.5 text-xs text-white focus:outline-none focus:border-emerald-500">
-                        <textarea placeholder="Bullet details / description" oninput="updateEduField(${index}, 'details', this.value)" class="w-full bg-slate-900 border border-slate-800 rounded px-2.5 py-1.5 text-xs text-white focus:outline-none focus:border-emerald-500" rows="2">${edu.details}</textarea>
+                        <input type="text" value="${edu.institution}" placeholder="Institution" onchange="updateEduField(${index}, 'institution', this.value)" class="w-full bg-slate-900 border border-slate-800 rounded px-2.5 py-1.5 text-xs text-white focus:outline-none focus:border-emerald-500">
+                        <input type="text" value="${edu.degree}" placeholder="Degree Details" onchange="updateEduField(${index}, 'degree', this.value)" class="w-full bg-slate-900 border border-slate-800 rounded px-2.5 py-1.5 text-xs text-white focus:outline-none focus:border-emerald-500">
+                        <input type="text" value="${edu.period}" placeholder="Time Period" onchange="updateEduField(${index}, 'period', this.value)" class="w-full bg-slate-900 border border-slate-800 rounded px-2.5 py-1.5 text-xs text-white focus:outline-none focus:border-emerald-500">
+                        <textarea placeholder="Bullet details / description" onchange="updateEduField(${index}, 'details', this.value)" class="w-full bg-slate-900 border border-slate-800 rounded px-2.5 py-1.5 text-xs text-white focus:outline-none focus:border-emerald-500" rows="2">${edu.details}</textarea>
                     </div>
                 `;
             });
@@ -1209,8 +1209,8 @@
                         <button onclick="deleteCertItem(${index})" class="absolute top-2 right-2 text-slate-500 hover:text-red-400 p-1 transition">
                             <i class="fa-solid fa-trash-can text-xs"></i>
                         </button>
-                        <input type="text" value="${cert.name}" placeholder="Certification Name" oninput="updateCertField(${index}, 'name', this.value)" class="w-full bg-slate-900 border border-slate-800 rounded px-2.5 py-1.5 text-xs text-white">
-                        <input type="text" value="${cert.issuer}" placeholder="Issuer (e.g. Issuing Organization)" oninput="updateCertField(${index}, 'issuer', this.value)" class="w-full bg-slate-900 border border-slate-800 rounded px-2.5 py-1.5 text-xs text-white">
+                        <input type="text" value="${cert.name}" placeholder="Certification Name" onchange="updateCertField(${index}, 'name', this.value)" class="w-full bg-slate-900 border border-slate-800 rounded px-2.5 py-1.5 text-xs text-white">
+                        <input type="text" value="${cert.issuer}" placeholder="Issuer (e.g. Issuing Organization)" onchange="updateCertField(${index}, 'issuer', this.value)" class="w-full bg-slate-900 border border-slate-800 rounded px-2.5 py-1.5 text-xs text-white">
                     </div>
                 `;
             });
@@ -1286,10 +1286,10 @@
                         <button onclick="deleteProjectItem(${index})" class="absolute top-2 right-2 text-slate-500 hover:text-red-400 p-1 transition">
                             <i class="fa-solid fa-trash-can text-xs"></i>
                         </button>
-                        <input type="text" value="${proj.title}" placeholder="Project Title" oninput="updateProjField(${index}, 'title', this.value)" class="w-full bg-slate-900 border border-slate-800 rounded px-2.5 py-1.5 text-xs text-white">
-                        <input type="text" value="${proj.role}" placeholder="Your Role (e.g. Scrum Master)" oninput="updateProjField(${index}, 'role', this.value)" class="w-full bg-slate-900 border border-slate-800 rounded px-2.5 py-1.5 text-xs text-white">
-                        <input type="text" value="${proj.period}" placeholder="Time / Semester" oninput="updateProjField(${index}, 'period', this.value)" class="w-full bg-slate-900 border border-slate-800 rounded px-2.5 py-1.5 text-xs text-white">
-                        <textarea placeholder="Description of details" oninput="updateProjField(${index}, 'details', this.value)" class="w-full bg-slate-900 border border-slate-800 rounded px-2.5 py-1.5 text-xs text-white" rows="2">${proj.details}</textarea>
+                        <input type="text" value="${proj.title}" placeholder="Project Title" onchange="updateProjField(${index}, 'title', this.value)" class="w-full bg-slate-900 border border-slate-800 rounded px-2.5 py-1.5 text-xs text-white">
+                        <input type="text" value="${proj.role}" placeholder="Your Role (e.g. Scrum Master)" onchange="updateProjField(${index}, 'role', this.value)" class="w-full bg-slate-900 border border-slate-800 rounded px-2.5 py-1.5 text-xs text-white">
+                        <input type="text" value="${proj.period}" placeholder="Time / Semester" onchange="updateProjField(${index}, 'period', this.value)" class="w-full bg-slate-900 border border-slate-800 rounded px-2.5 py-1.5 text-xs text-white">
+                        <textarea placeholder="Description of details" onchange="updateProjField(${index}, 'details', this.value)" class="w-full bg-slate-900 border border-slate-800 rounded px-2.5 py-1.5 text-xs text-white" rows="2">${proj.details}</textarea>
                     </div>
                 `;
             });
@@ -1365,10 +1365,10 @@
                         <button onclick="deleteExperienceItem(${index})" class="absolute top-2 right-2 text-slate-500 hover:text-red-400 p-1 transition">
                             <i class="fa-solid fa-trash-can text-xs"></i>
                         </button>
-                        <input type="text" value="${exp.company}" placeholder="Organization / Company" oninput="updateExpField(${index}, 'company', this.value)" class="w-full bg-slate-900 border border-slate-800 rounded px-2.5 py-1.5 text-xs text-white">
-                        <input type="text" value="${exp.role}" placeholder="Title / Role" oninput="updateExpField(${index}, 'role', this.value)" class="w-full bg-slate-900 border border-slate-800 rounded px-2.5 py-1.5 text-xs text-white">
-                        <input type="text" value="${exp.period}" placeholder="Timeperiod" oninput="updateExpField(${index}, 'period', this.value)" class="w-full bg-slate-900 border border-slate-800 rounded px-2.5 py-1.5 text-xs text-white">
-                        <textarea placeholder="Job descriptions" oninput="updateExpField(${index}, 'details', this.value)" class="w-full bg-slate-900 border border-slate-800 rounded px-2.5 py-1.5 text-xs text-white" rows="2">${exp.details}</textarea>
+                        <input type="text" value="${exp.company}" placeholder="Organization / Company" onchange="updateExpField(${index}, 'company', this.value)" class="w-full bg-slate-900 border border-slate-800 rounded px-2.5 py-1.5 text-xs text-white">
+                        <input type="text" value="${exp.role}" placeholder="Title / Role" onchange="updateExpField(${index}, 'role', this.value)" class="w-full bg-slate-900 border border-slate-800 rounded px-2.5 py-1.5 text-xs text-white">
+                        <input type="text" value="${exp.period}" placeholder="Timeperiod" onchange="updateExpField(${index}, 'period', this.value)" class="w-full bg-slate-900 border border-slate-800 rounded px-2.5 py-1.5 text-xs text-white">
+                        <textarea placeholder="Job descriptions" onchange="updateExpField(${index}, 'details', this.value)" class="w-full bg-slate-900 border border-slate-800 rounded px-2.5 py-1.5 text-xs text-white" rows="2">${exp.details}</textarea>
                     </div>
                 `;
             });
@@ -1467,8 +1467,8 @@
 
                 formCont.innerHTML += `
                     <div class="p-2.5 bg-slate-950 border border-slate-800 rounded-lg flex items-center justify-between space-x-2">
-                        <input type="text" value="${lang.name}" placeholder="Language" oninput="updateLangField(${index}, 'name', this.value)" class="w-1/2 bg-slate-900 border border-slate-800 rounded px-2 py-1 text-xs text-white">
-                        <input type="text" value="${lang.level}" placeholder="Level" oninput="updateLangField(${index}, 'level', this.value)" class="w-1/3 bg-slate-900 border border-slate-800 rounded px-2 py-1 text-xs text-white">
+                        <input type="text" value="${lang.name}" placeholder="Language" onchange="updateLangField(${index}, 'name', this.value)" class="w-1/2 bg-slate-900 border border-slate-800 rounded px-2 py-1 text-xs text-white">
+                        <input type="text" value="${lang.level}" placeholder="Level" onchange="updateLangField(${index}, 'level', this.value)" class="w-1/3 bg-slate-900 border border-slate-800 rounded px-2 py-1 text-xs text-white">
                         <button onclick="deleteLanguageItem(${index})" class="text-slate-500 hover:text-red-400 p-1 transition">
                             <i class="fa-solid fa-trash-can text-xs"></i>
                         </button>
