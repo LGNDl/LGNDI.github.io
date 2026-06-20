@@ -1,0 +1,1632 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mohammed Alqahtani - Interactive CV Designer</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts for High-Quality Typography -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Playfair+Display:ital,wght@0,600;0,700;1,400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #0f172a; /* Slate 900 for dark editing environment */
+        }
+        
+        .serif-title {
+            font-family: 'Playfair Display', serif;
+        }
+
+        .mono-text {
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        /* Standard A4 Paper Simulation */
+        .resume-container {
+            width: 210mm;
+            min-height: 297mm;
+            background: #ffffff;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        /* Customizable Color Variables */
+        :root {
+            --primary-color: #047857; /* Emerald Green */
+            --primary-light: #ecfdf5; 
+            --primary-dark: #065f46;
+            --text-dark: #0f172a;
+            --text-muted: #475569;
+        }
+
+        .theme-primary-text { color: var(--primary-color); }
+        .theme-primary-bg { background-color: var(--primary-color); }
+        .theme-primary-border { border-color: var(--primary-color); }
+        .theme-accent-bg { background-color: var(--primary-light); }
+
+        /* Direct visual indicators for direct-on-sheet editing */
+        [contenteditable="true"] {
+            position: relative;
+            cursor: text;
+            transition: all 0.2s ease;
+        }
+        
+        [contenteditable="true"]:hover {
+            background-color: rgba(254, 243, 199, 0.4);
+            outline: 1px dashed var(--primary-color);
+            outline-offset: 2px;
+            border-radius: 2px;
+        }
+
+        [contenteditable="true"]:focus {
+            outline: 2px solid var(--primary-color);
+            outline-offset: 4px;
+            background-color: rgba(254, 243, 199, 0.7);
+            border-radius: 4px;
+        }
+
+        /* Custom scrollbar for left side form editor */
+        .custom-scroll::-webkit-scrollbar {
+            width: 8px;
+        }
+        .custom-scroll::-webkit-scrollbar-track {
+            background: #1e293b;
+        }
+        .custom-scroll::-webkit-scrollbar-thumb {
+            background: #475569;
+            border-radius: 4px;
+        }
+        .custom-scroll::-webkit-scrollbar-thumb:hover {
+            background: #64748b;
+        }
+
+        /* Custom tabs styles */
+        .tab-btn.active {
+            background-color: #1e293b;
+            color: #10b981; /* Emerald 500 */
+            border-bottom: 2px solid #10b981;
+        }
+
+        /* Print Override */
+        @media print {
+            body {
+                background: #ffffff !important;
+                padding: 0 !important;
+                margin: 0 !important;
+            }
+            .no-print {
+                display: none !important;
+            }
+            .resume-container {
+                box-shadow: none !important;
+                margin: 0 !important;
+                padding: 0 !important;
+                width: 100% !important;
+                min-height: 100% !important;
+                height: auto !important;
+                border: none !important;
+            }
+            .section-block {
+                page-break-inside: avoid;
+            }
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col lg:flex-row overflow-x-hidden text-slate-100">
+
+    <!-- CUSTOM TOAST NOTIFICATION WINDOW -->
+    <div id="toast-notification" class="fixed top-6 right-6 z-50 transform translate-x-80 opacity-0 transition-all duration-300 pointer-events-none">
+        <div class="bg-slate-800 text-white px-5 py-4 rounded-xl border border-emerald-500 shadow-2xl flex items-center space-x-3 max-w-sm">
+            <div id="toast-icon" class="w-8 h-8 rounded-full bg-emerald-500/10 text-emerald-400 flex items-center justify-center text-sm">
+                <i class="fa-solid fa-circle-check"></i>
+            </div>
+            <div>
+                <p id="toast-title" class="font-bold text-xs text-white uppercase tracking-wider">Success</p>
+                <p id="toast-message" class="text-xs text-slate-300 mt-0.5">Your updates have been processed successfully.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- SHARE DIALOG MODAL -->
+    <div id="share-modal" class="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/80 hidden px-4">
+        <div class="bg-slate-900 border border-slate-800 rounded-2xl max-w-lg w-full p-6 shadow-2xl space-y-6">
+            <div class="flex justify-between items-start">
+                <div class="flex items-center space-x-3">
+                    <div class="w-10 h-10 bg-emerald-500/10 text-emerald-400 rounded-xl flex items-center justify-center">
+                        <i class="fa-solid fa-share-nodes text-lg"></i>
+                    </div>
+                    <div>
+                        <h3 class="font-bold text-lg text-white">Share Live Customized Resume</h3>
+                        <p class="text-xs text-slate-400">Generate a live-updating link containing your content.</p>
+                    </div>
+                </div>
+                <button onclick="toggleShareModal(false)" class="text-slate-400 hover:text-white transition">
+                    <i class="fa-solid fa-times text-lg"></i>
+                </button>
+            </div>
+
+            <!-- Share Content -->
+            <div class="space-y-4">
+                <div class="space-y-1.5">
+                    <label class="text-xs font-semibold text-slate-300">Live URL Link</label>
+                    <div class="flex space-x-2">
+                        <input id="share-url-input" readonly type="text" class="bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-xs text-emerald-400 font-mono flex-1 focus:outline-none">
+                        <button onclick="copyShareURL()" class="px-5 py-3 bg-emerald-500 hover:bg-emerald-600 active:bg-emerald-700 text-white font-semibold rounded-xl text-xs flex items-center space-x-2 transition">
+                            <i class="fa-solid fa-copy"></i>
+                            <span>Copy</span>
+                        </button>
+                    </div>
+                </div>
+                <p class="text-[11px] text-slate-400 leading-relaxed">
+                    <i class="fa-solid fa-circle-info mr-1 text-emerald-400"></i> Sharing creates a custom snapshot of your CV. Anyone who navigates to this link will view your bespoke layout and text immediately.
+                </p>
+            </div>
+
+            <!-- Action buttons -->
+            <div class="flex justify-end pt-2">
+                <button onclick="toggleShareModal(false)" class="px-5 py-2.5 bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-semibold rounded-xl transition">
+                    Done
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- LEFT SIDEBAR: THE COMPREHENSIVE CV FORM EDITOR (no-print) -->
+    <aside class="no-print w-full lg:w-[480px] bg-slate-950 text-slate-200 flex-shrink-0 flex flex-col border-r border-slate-800/80 shadow-2xl z-10 h-auto lg:h-screen">
+        
+        <!-- Sidebar Brand Header -->
+        <div class="p-5 border-b border-slate-800/80 flex items-center justify-between">
+            <div class="flex items-center space-x-3">
+                <div class="w-10 h-10 rounded-xl bg-emerald-600 flex items-center justify-center shadow-lg shadow-emerald-500/20">
+                    <i class="fa-solid fa-pen-nib text-white text-lg"></i>
+                </div>
+                <div>
+                    <h1 class="font-bold text-sm tracking-wide uppercase leading-none">CV Builder Studio</h1>
+                    <span class="text-[11px] text-slate-400">Live Workspace Optimizer</span>
+                </div>
+            </div>
+            <div class="flex items-center space-x-2">
+                <button onclick="resetToSampleData()" class="px-2.5 py-1.5 rounded-lg bg-slate-800/60 hover:bg-slate-800 text-slate-300 text-xs font-medium border border-slate-700/50 transition flex items-center space-x-1" title="Reload original CV templates">
+                    <i class="fa-solid fa-rotate-left"></i>
+                    <span class="text-[10px]">Reset</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- Live Layout & Core Controls Panel -->
+        <div class="p-4 bg-slate-900/60 border-b border-slate-800/80 flex flex-col space-y-3">
+            <div class="flex items-center justify-between">
+                <span class="text-xs font-semibold uppercase tracking-wider text-slate-400">Layout &amp; Styling</span>
+                <span class="text-[10px] text-emerald-400 bg-emerald-400/10 px-2 py-0.5 rounded border border-emerald-400/20 font-mono">Sync: Active</span>
+            </div>
+            <div class="grid grid-cols-3 gap-1.5">
+                <button onclick="changeLayout('split')" id="tab-layout-split" class="py-2 px-1 rounded-xl border border-emerald-500 bg-emerald-500/10 text-emerald-400 text-[10px] font-bold flex flex-col items-center justify-center space-y-1 transition">
+                    <i class="fa-solid fa-columns text-xs"></i>
+                    <span>Split Column</span>
+                </button>
+                <button onclick="changeLayout('classic')" id="tab-layout-classic" class="py-2 px-1 rounded-xl border border-slate-800 bg-slate-800/50 hover:border-slate-700 text-slate-400 text-[10px] font-bold flex flex-col items-center justify-center space-y-1 transition">
+                    <i class="fa-solid fa-align-left text-xs"></i>
+                    <span>Classic Plain</span>
+                </button>
+                <button onclick="changeLayout('ats')" id="tab-layout-ats" class="py-2 px-1 rounded-xl border border-slate-800 bg-slate-800/50 hover:border-slate-700 text-slate-400 text-[10px] font-bold flex flex-col items-center justify-center space-y-1 transition">
+                    <i class="fa-solid fa-robot text-xs"></i>
+                    <span>ATS Verified</span>
+                </button>
+            </div>
+
+            <!-- Color Palette Switcher -->
+            <div id="palette-control" class="flex items-center justify-between pt-1">
+                <span class="text-[11px] text-slate-400">Accent Colors:</span>
+                <div class="flex items-center space-x-1.5">
+                    <button onclick="changeTheme('#047857', '#ecfdf5', '#065f46')" class="w-5 h-5 rounded-full bg-emerald-600 border border-slate-900 hover:scale-110 transition" title="Agile Emerald"></button>
+                    <button onclick="changeTheme('#1e3a8a', '#eff6ff', '#172554')" class="w-5 h-5 rounded-full bg-blue-800 border border-slate-900 hover:scale-110 transition" title="Corporate Navy"></button>
+                    <button onclick="changeTheme('#334155', '#f8fafc', '#1e293b')" class="w-5 h-5 rounded-full bg-slate-600 border border-slate-900 hover:scale-110 transition" title="Slate Gray"></button>
+                    <button onclick="changeTheme('#7c2d12', '#fff7ed', '#431407')" class="w-5 h-5 rounded-full bg-orange-800 border border-slate-900 hover:scale-110 transition" title="Premium Terracotta"></button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Category Editor Tab Selector -->
+        <div class="bg-slate-900 border-b border-slate-800/80 flex overflow-x-auto text-xs font-semibold custom-scroll">
+            <button onclick="switchTab('tab-personal')" id="btn-tab-personal" class="tab-btn py-3 px-4 text-slate-400 hover:text-white border-b-2 border-transparent transition flex-shrink-0 flex items-center space-x-1.5 active">
+                <i class="fa-solid fa-user text-[11px]"></i>
+                <span>Identity</span>
+            </button>
+            <button onclick="switchTab('tab-summary')" id="btn-tab-summary" class="tab-btn py-3 px-4 text-slate-400 hover:text-white border-b-2 border-transparent transition flex-shrink-0 flex items-center space-x-1.5">
+                <i class="fa-solid fa-address-card text-[11px]"></i>
+                <span>Summary</span>
+            </button>
+            <button onclick="switchTab('tab-education')" id="btn-tab-education" class="tab-btn py-3 px-4 text-slate-400 hover:text-white border-b-2 border-transparent transition flex-shrink-0 flex items-center space-x-1.5">
+                <i class="fa-solid fa-graduation-cap text-[11px]"></i>
+                <span>Education</span>
+            </button>
+            <button onclick="switchTab('tab-projects')" id="btn-tab-projects" class="tab-btn py-3 px-4 text-slate-400 hover:text-white border-b-2 border-transparent transition flex-shrink-0 flex items-center space-x-1.5">
+                <i class="fa-solid fa-folder-closed text-[11px]"></i>
+                <span>Projects</span>
+            </button>
+            <button onclick="switchTab('tab-skills')" id="btn-tab-skills" class="tab-btn py-3 px-4 text-slate-400 hover:text-white border-b-2 border-transparent transition flex-shrink-0 flex items-center space-x-1.5">
+                <i class="fa-solid fa-award text-[11px]"></i>
+                <span>Skills &amp; Languages</span>
+            </button>
+        </div>
+
+        <!-- Tab Body Content: Scrollable Area -->
+        <div class="flex-1 overflow-y-auto p-5 space-y-6 custom-scroll">
+            
+            <!-- Tab: Personal Profile Info -->
+            <div id="tab-personal" class="editor-tab space-y-4">
+                <div class="bg-slate-900/40 p-4 rounded-xl border border-slate-800/40 space-y-3.5">
+                    <h3 class="text-xs font-bold uppercase tracking-wider text-slate-400">Primary Identity Details</h3>
+                    <div class="grid grid-cols-2 gap-3">
+                        <div class="space-y-1">
+                            <label class="text-[10px] uppercase font-bold text-slate-400">First Name</label>
+                            <input type="text" id="form-first-name" class="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-xs text-slate-100 focus:outline-none focus:border-emerald-500">
+                        </div>
+                        <div class="space-y-1">
+                            <label class="text-[10px] uppercase font-bold text-slate-400">Last Name</label>
+                            <input type="text" id="form-last-name" class="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-xs text-slate-100 focus:outline-none focus:border-emerald-500">
+                        </div>
+                    </div>
+                    <div class="space-y-1">
+                        <label class="text-[10px] uppercase font-bold text-slate-400">Professional Sub-title</label>
+                        <input type="text" id="form-title" class="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-xs text-slate-100 focus:outline-none focus:border-emerald-500">
+                    </div>
+                </div>
+
+                <div class="bg-slate-900/40 p-4 rounded-xl border border-slate-800/40 space-y-3">
+                    <h3 class="text-xs font-bold uppercase tracking-wider text-slate-400">Reach &amp; Contact Metadata</h3>
+                    <div class="grid grid-cols-2 gap-3">
+                        <div class="space-y-1">
+                            <label class="text-[10px] uppercase font-bold text-slate-400"><i class="fa-solid fa-phone mr-1"></i> Phone</label>
+                            <input type="text" id="form-phone" class="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-xs text-slate-100 focus:outline-none focus:border-emerald-500">
+                        </div>
+                        <div class="space-y-1">
+                            <label class="text-[10px] uppercase font-bold text-slate-400"><i class="fa-solid fa-envelope mr-1"></i> Email</label>
+                            <input type="text" id="form-email" class="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-xs text-slate-100 focus:outline-none focus:border-emerald-500">
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-2 gap-3">
+                        <div class="space-y-1">
+                            <label class="text-[10px] uppercase font-bold text-slate-400"><i class="fa-solid fa-location-dot mr-1"></i> Location</label>
+                            <input type="text" id="form-location" class="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-xs text-slate-100 focus:outline-none focus:border-emerald-500">
+                        </div>
+                        <div class="space-y-1">
+                            <label class="text-[10px] uppercase font-bold text-slate-400"><i class="fa-brands fa-linkedin-in mr-1"></i> LinkedIn Profile</label>
+                            <input type="text" id="form-linkedin" class="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-xs text-slate-100 focus:outline-none focus:border-emerald-500">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tab: Personal Profile Summary -->
+            <div id="tab-summary" class="editor-tab space-y-4 hidden">
+                <div class="bg-slate-900/40 p-4 rounded-xl border border-slate-800/40 space-y-3">
+                    <h3 class="text-xs font-bold uppercase tracking-wider text-slate-400">Professional Summary</h3>
+                    <p class="text-[10px] text-slate-400 italic">Describe your profile, credentials, and goals clearly for immediate corporate evaluation.</p>
+                    <textarea id="form-summary" rows="8" class="w-full bg-slate-950 border border-slate-800 rounded-lg p-3 text-xs text-slate-100 focus:outline-none focus:border-emerald-500 leading-relaxed"></textarea>
+                </div>
+            </div>
+
+            <!-- Tab: Education & Academic Certifications -->
+            <div id="tab-education" class="editor-tab space-y-5 hidden">
+                <!-- Education Dynamic Rows -->
+                <div class="space-y-3">
+                    <div class="flex justify-between items-center">
+                        <h3 class="text-xs font-bold uppercase tracking-wider text-slate-400">Schools &amp; Degrees</h3>
+                        <button onclick="addEducationItem()" class="px-2.5 py-1 rounded bg-emerald-600 hover:bg-emerald-700 text-[10px] font-bold text-white flex items-center space-x-1 transition">
+                            <i class="fa-solid fa-plus"></i>
+                            <span>Add</span>
+                        </button>
+                    </div>
+                    <div id="form-education-container" class="space-y-3">
+                        <!-- Dynamic Entries Injected by JS -->
+                    </div>
+                </div>
+
+                <!-- Certifications Dynamic Rows -->
+                <div class="space-y-3 pt-4 border-t border-slate-800/60">
+                    <div class="flex justify-between items-center">
+                        <h3 class="text-xs font-bold uppercase tracking-wider text-slate-400">Professional Certifications</h3>
+                        <button onclick="addCertItem()" class="px-2.5 py-1 rounded bg-emerald-600 hover:bg-emerald-700 text-[10px] font-bold text-white flex items-center space-x-1 transition">
+                            <i class="fa-solid fa-plus"></i>
+                            <span>Add</span>
+                        </button>
+                    </div>
+                    <div id="form-cert-container" class="space-y-3">
+                        <!-- Dynamic Entries Injected by JS -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tab: Experience & Key Academic Projects -->
+            <div id="tab-projects" class="editor-tab space-y-5 hidden">
+                <!-- Projects Dynamic Rows -->
+                <div class="space-y-3">
+                    <div class="flex justify-between items-center">
+                        <h3 class="text-xs font-bold uppercase tracking-wider text-slate-400">Key Projects</h3>
+                        <button onclick="addProjectItem()" class="px-2.5 py-1 rounded bg-emerald-600 hover:bg-emerald-700 text-[10px] font-bold text-white flex items-center space-x-1 transition">
+                            <i class="fa-solid fa-plus"></i>
+                            <span>Add Project</span>
+                        </button>
+                    </div>
+                    <div id="form-project-container" class="space-y-3">
+                        <!-- Dynamic Projects Injected by JS -->
+                    </div>
+                </div>
+
+                <!-- Professional Experience Dynamic Rows -->
+                <div class="space-y-3 pt-4 border-t border-slate-800/60">
+                    <div class="flex justify-between items-center">
+                        <h3 class="text-xs font-bold uppercase tracking-wider text-slate-400">Work &amp; Volunteer History</h3>
+                        <button onclick="addExperienceItem()" class="px-2.5 py-1 rounded bg-emerald-600 hover:bg-emerald-700 text-[10px] font-bold text-white flex items-center space-x-1 transition">
+                            <i class="fa-solid fa-plus"></i>
+                            <span>Add Position</span>
+                        </button>
+                    </div>
+                    <div id="form-experience-container" class="space-y-3">
+                        <!-- Dynamic Experiences Injected by JS -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tab: Skills & Languages -->
+            <div id="tab-skills" class="editor-tab space-y-5 hidden">
+                <div class="bg-slate-900/40 p-4 rounded-xl border border-slate-800/40 space-y-3">
+                    <h3 class="text-xs font-bold uppercase tracking-wider text-slate-400">Core Capabilities (Comma-separated)</h3>
+                    <p class="text-[10px] text-slate-400">Add key terms, professional programs, or agile roles. Split with commas.</p>
+                    <textarea id="form-skills" rows="5" class="w-full bg-slate-950 border border-slate-800 rounded-lg p-3 text-xs text-slate-100 focus:outline-none focus:border-emerald-500 font-mono leading-relaxed"></textarea>
+                </div>
+
+                <!-- Languages Dynamic Area -->
+                <div class="space-y-3">
+                    <div class="flex justify-between items-center">
+                        <h3 class="text-xs font-bold uppercase tracking-wider text-slate-400">Fluent Languages</h3>
+                        <button onclick="addLanguageItem()" class="px-2.5 py-1 rounded bg-emerald-600 hover:bg-emerald-700 text-[10px] font-bold text-white flex items-center space-x-1 transition">
+                            <i class="fa-solid fa-plus"></i>
+                            <span>Add</span>
+                        </button>
+                    </div>
+                    <div id="form-language-container" class="space-y-3">
+                        <!-- Dynamic rows injected by JS -->
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Sidebar Export/Share Action Footer -->
+        <div class="p-5 border-t border-slate-800 bg-slate-950 flex flex-col space-y-3.5 no-print">
+            <div class="grid grid-cols-2 gap-3">
+                <!-- PDF Exporter Action -->
+                <button onclick="window.print()" class="py-3 px-4 bg-emerald-600 hover:bg-emerald-500 active:bg-emerald-700 text-white font-bold rounded-xl text-xs flex items-center justify-center space-x-2 transition shadow-lg shadow-emerald-600/10">
+                    <i class="fa-solid fa-file-pdf"></i>
+                    <span>Export / Print PDF</span>
+                </button>
+                <!-- Online Share Creator -->
+                <button onclick="publishAndShare()" class="py-3 px-4 bg-slate-800 hover:bg-slate-700 active:bg-slate-900 text-slate-100 font-bold rounded-xl text-xs flex items-center justify-center space-x-2 transition border border-slate-700/80">
+                    <i class="fa-solid fa-share-nodes text-emerald-400 animate-pulse"></i>
+                    <span>Share Live Link</span>
+                </button>
+            </div>
+            
+            <div class="bg-slate-900/60 p-3 rounded-lg border border-slate-800 text-[10px] text-slate-400 leading-relaxed flex items-start space-x-2">
+                <i class="fa-solid fa-print text-emerald-400 mt-0.5"></i>
+                <div>
+                    <strong>Print Advice:</strong> Toggle browser settings to set Margins to <strong>None</strong> and turn on <strong>Background Graphics</strong> to retain theme designs flawlessly.
+                </div>
+            </div>
+        </div>
+
+    </aside>
+
+    <!-- RIGHT MAIN WORKSPACE: THE LIVE RESUME A4 PREVIEW (Editable) -->
+    <main class="flex-1 overflow-auto p-4 md:p-8 lg:p-12 flex flex-col items-center justify-start h-auto lg:h-screen bg-slate-900">
+        
+        <!-- Interactive Helper Bar -->
+        <div class="no-print w-full max-w-[210mm] mb-4 bg-slate-950/60 backdrop-blur-md rounded-xl p-3 border border-slate-800/80 flex flex-col sm:flex-row justify-between items-center gap-3">
+            <div class="flex items-center space-x-2.5 text-xs">
+                <span class="relative flex h-2 w-2">
+                    <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                    <span class="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
+                </span>
+                <span class="text-slate-400">Bi-directional Engine: <strong class="text-slate-200">Enabled</strong>. Change anything on either side!</span>
+            </div>
+            <div class="flex items-center space-x-2">
+                <span class="text-[10px] text-slate-500 italic">Layout in Preview:</span>
+                <span id="preview-layout-badge" class="px-2.5 py-0.5 text-[9px] font-extrabold uppercase tracking-widest text-emerald-400 bg-emerald-500/10 border border-emerald-500/35 rounded-full font-mono">Modern Split</span>
+            </div>
+        </div>
+
+        <!-- RESUME PAPER SHEET CONTAINER -->
+        <div id="resume-sheet" class="resume-container p-10 md:p-12 text-slate-900 relative">
+            
+            <!-- DESIGN BAR (Only visible on split/classic layouts) -->
+            <div id="top-accent-bar" class="absolute top-0 left-0 w-full h-2 theme-primary-bg no-print"></div>
+
+            <!-- ================= RENDERING WORKPLACE: SPLIT VIEW TEMPLATE ================= -->
+            <div id="layout-split-view" class="space-y-6">
+                <!-- Header Block -->
+                <header class="border-b pb-6 flex flex-col md:flex-row justify-between items-start md:items-end gap-4 theme-primary-border">
+                    <div class="space-y-2">
+                        <h1 class="text-4xl font-extrabold tracking-tight text-slate-950 serif-title">
+                            <span data-cv-field="firstName" contenteditable="true" class="block uppercase">MOHAMMED</span>
+                            <span data-cv-field="lastName" contenteditable="true" class="block theme-primary-text font-bold uppercase">ALQAHTANI</span>
+                        </h1>
+                        <p data-cv-field="title" contenteditable="true" class="text-xs font-bold tracking-wider uppercase text-slate-500">
+                            Computer Information Systems &bull; Certified Scrum Master (PSM I)
+                        </p>
+                    </div>
+                    
+                    <!-- Contacts Grid -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-2 text-xs text-slate-600 font-medium">
+                        <div class="flex items-center space-x-2">
+                            <div class="w-6 h-6 rounded-full theme-accent-bg text-[10px] theme-primary-text flex items-center justify-center">
+                                <i class="fa-solid fa-phone"></i>
+                            </div>
+                            <span data-cv-field="phone" contenteditable="true">+966 55 781 9629</span>
+                        </div>
+                        <div class="flex items-center space-x-2">
+                            <div class="w-6 h-6 rounded-full theme-accent-bg text-[10px] theme-primary-text flex items-center justify-center">
+                                <i class="fa-solid fa-envelope"></i>
+                            </div>
+                            <span data-cv-field="email" contenteditable="true">qahtimjmj@gmail.com</span>
+                        </div>
+                        <div class="flex items-center space-x-2">
+                            <div class="w-6 h-6 rounded-full theme-accent-bg text-[10px] theme-primary-text flex items-center justify-center">
+                                <i class="fa-brands fa-linkedin-in"></i>
+                            </div>
+                            <span data-cv-field="linkedin" contenteditable="true" class="text-slate-500 italic">linkedin.com/in/mohammed-alqahtani</span>
+                        </div>
+                        <div class="flex items-center space-x-2">
+                            <div class="w-6 h-6 rounded-full theme-accent-bg text-[10px] theme-primary-text flex items-center justify-center">
+                                <i class="fa-solid fa-location-dot"></i>
+                            </div>
+                            <span data-cv-field="location" contenteditable="true">Eastern Province, KSA</span>
+                        </div>
+                    </div>
+                </header>
+
+                <!-- Core Column Grid -->
+                <div class="grid grid-cols-12 gap-8">
+                    
+                    <!-- Left Sidebar (Column: 4 / 12) -->
+                    <div class="col-span-4 space-y-6 border-r pr-6 theme-primary-border">
+                        <!-- Skills badge block -->
+                        <section class="space-y-3">
+                            <h3 class="text-xs font-extrabold uppercase tracking-wider theme-primary-text flex items-center">
+                                <i class="fa-solid fa-sliders mr-2"></i> Competencies
+                            </h3>
+                            <div id="split-skills-badges" class="flex flex-wrap gap-1.5 pt-1">
+                                <!-- Rendered dynamically -->
+                            </div>
+                        </section>
+
+                        <!-- Certifications dynamic items -->
+                        <section class="space-y-3">
+                            <h3 class="text-xs font-extrabold uppercase tracking-wider theme-primary-text flex items-center">
+                                <i class="fa-solid fa-award mr-2"></i> Certifications
+                            </h3>
+                            <div id="split-certs-container" class="space-y-2">
+                                <!-- Rendered dynamically -->
+                            </div>
+                        </section>
+
+                        <!-- Languages dynamic sidebar items -->
+                        <section class="space-y-3">
+                            <h3 class="text-xs font-extrabold uppercase tracking-wider theme-primary-text flex items-center">
+                                <i class="fa-solid fa-language mr-2"></i> Languages
+                            </h3>
+                            <div id="split-languages-container" class="space-y-1.5 text-xs text-slate-700">
+                                <!-- Rendered dynamically -->
+                            </div>
+                        </section>
+                    </div>
+
+                    <!-- Right Block details (Column: 8 / 12) -->
+                    <div class="col-span-8 space-y-6">
+                        <!-- Summary paragraph -->
+                        <section class="space-y-2">
+                            <h3 class="text-xs font-extrabold uppercase tracking-wider theme-primary-text border-b pb-1.5 theme-primary-border flex items-center">
+                                <i class="fa-solid fa-user-tie mr-2"></i> Professional Summary
+                            </h3>
+                            <p data-cv-field="summary" contenteditable="true" class="text-xs text-slate-600 leading-relaxed text-justify">
+                                <!-- Injected summary -->
+                            </p>
+                        </section>
+
+                        <!-- Education History -->
+                        <section class="space-y-3">
+                            <h3 class="text-xs font-extrabold uppercase tracking-wider theme-primary-text border-b pb-1.5 theme-primary-border flex items-center">
+                                <i class="fa-solid fa-graduation-cap mr-2"></i> Education
+                            </h3>
+                            <div id="split-education-container" class="space-y-3">
+                                <!-- Dynamic Education Rows -->
+                            </div>
+                        </section>
+
+                        <!-- Academic Projects -->
+                        <section class="space-y-3">
+                            <h3 class="text-xs font-extrabold uppercase tracking-wider theme-primary-text border-b pb-1.5 theme-primary-border flex items-center">
+                                <i class="fa-solid fa-folder-open mr-2"></i> Academic Projects
+                            </h3>
+                            <div id="split-projects-container" class="space-y-3">
+                                <!-- Dynamic Projects Injected here -->
+                            </div>
+                        </section>
+
+                        <!-- Work Experiences -->
+                        <section id="split-experience-section" class="space-y-3 hidden">
+                            <h3 class="text-xs font-extrabold uppercase tracking-wider theme-primary-text border-b pb-1.5 theme-primary-border flex items-center">
+                                <i class="fa-solid fa-briefcase mr-2"></i> Experience
+                            </h3>
+                            <div id="split-experience-container" class="space-y-3">
+                                <!-- Dynamic Experiences Injected here -->
+                            </div>
+                        </section>
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- ================= RENDERING WORKPLACE: CLASSIC VIEW TEMPLATE ================= -->
+            <div id="layout-classic-view" class="space-y-6 hidden">
+                <header class="text-center space-y-2 border-b pb-6 theme-primary-border">
+                    <h1 class="text-4xl font-extrabold uppercase tracking-tight text-slate-950 serif-title">
+                        <span data-cv-field="firstName" contenteditable="true">MOHAMMED</span>
+                        <span data-cv-field="lastName" contenteditable="true">ALQAHTANI</span>
+                    </h1>
+                    <p data-cv-field="title" contenteditable="true" class="text-xs tracking-wider uppercase theme-primary-text font-bold">
+                        Computer Information Systems &bull; Certified Scrum Master (PSM I)
+                    </p>
+                    <div class="flex flex-wrap justify-center gap-x-4 gap-y-1 text-xs text-slate-600 mt-2 font-medium">
+                        <span><i class="fa-solid fa-phone text-[10px] theme-primary-text mr-1"></i> <span data-cv-field="phone" contenteditable="true">+966 55 781 9629</span></span>
+                        <span class="text-slate-300">|</span>
+                        <span><i class="fa-solid fa-envelope text-[10px] theme-primary-text mr-1"></i> <span data-cv-field="email" contenteditable="true">qahtimjmj@gmail.com</span></span>
+                        <span class="text-slate-300">|</span>
+                        <span><i class="fa-solid fa-location-dot text-[10px] theme-primary-text mr-1"></i> <span data-cv-field="location" contenteditable="true">Eastern Province, KSA</span></span>
+                    </div>
+                </header>
+
+                <section class="space-y-2">
+                    <h3 class="text-xs font-bold uppercase tracking-wider theme-primary-text border-b pb-1 theme-primary-border">
+                        Professional Profile
+                    </h3>
+                    <p data-cv-field="summary" contenteditable="true" class="text-xs text-slate-600 leading-relaxed text-justify">
+                        <!-- Injected summary -->
+                    </p>
+                </section>
+
+                <section class="space-y-3">
+                    <h3 class="text-xs font-bold uppercase tracking-wider theme-primary-text border-b pb-1 theme-primary-border">
+                        Education &amp; Academic Background
+                    </h3>
+                    <div id="classic-education-container" class="space-y-3">
+                        <!-- Dynamic Education Rows -->
+                    </div>
+                </section>
+
+                <section class="space-y-3">
+                    <h3 class="text-xs font-bold uppercase tracking-wider theme-primary-text border-b pb-1 theme-primary-border">
+                        Technical Competencies
+                    </h3>
+                    <div id="classic-skills-container" class="grid grid-cols-2 md:grid-cols-4 gap-2 pt-1 text-xs text-slate-600">
+                        <!-- Dynamic Skills Injected dynamically -->
+                    </div>
+                </section>
+
+                <section class="space-y-3">
+                    <h3 class="text-xs font-bold uppercase tracking-wider theme-primary-text border-b pb-1 theme-primary-border">
+                        Relevant Projects
+                    </h3>
+                    <div id="classic-projects-container" class="space-y-3 text-xs">
+                        <!-- Dynamic Projects Injected here -->
+                    </div>
+                </section>
+
+                <section id="classic-experience-section" class="space-y-3 hidden">
+                    <h3 class="text-xs font-bold uppercase tracking-wider theme-primary-text border-b pb-1 theme-primary-border">
+                        Work &amp; Professional Experience
+                    </h3>
+                    <div id="classic-experience-container" class="space-y-3 text-xs">
+                        <!-- Dynamic Experience Injected here -->
+                    </div>
+                </section>
+
+                <section class="space-y-3">
+                    <h3 class="text-xs font-bold uppercase tracking-wider theme-primary-text border-b pb-1 theme-primary-border">
+                        Certifications &amp; Licenses
+                    </h3>
+                    <div id="classic-certs-container" class="grid grid-cols-2 gap-3 text-xs text-slate-600">
+                        <!-- Dynamic Certifications -->
+                    </div>
+                </section>
+
+                <section class="space-y-2">
+                    <h3 class="text-xs font-bold uppercase tracking-wider theme-primary-text border-b pb-1 theme-primary-border">
+                        Languages
+                    </h3>
+                    <p id="classic-languages-paragraph" class="text-xs text-slate-600">
+                        <!-- Filled in via rendering -->
+                    </p>
+                </section>
+            </div>
+
+            <!-- ================= RENDERING WORKPLACE: ATS FRIENDLY TEMPLATE ================= -->
+            <div id="layout-ats-view" class="space-y-5 hidden text-black font-sans leading-relaxed">
+                <header class="text-center pb-3 border-b border-gray-300">
+                    <h1 class="text-2xl font-bold tracking-tight text-black">
+                        <span data-cv-field="firstName" contenteditable="true">MOHAMMED</span>
+                        <span data-cv-field="lastName" contenteditable="true">ALQAHTANI</span>
+                    </h1>
+                    <div class="text-xs text-gray-700 mt-1 space-x-1">
+                        <span>Phone: <span data-cv-field="phone" contenteditable="true">+966 55 781 9629</span></span> |
+                        <span>Email: <span data-cv-field="email" contenteditable="true">qahtimjmj@gmail.com</span></span> |
+                        <span>LinkedIn: <span data-cv-field="linkedin" contenteditable="true">linkedin.com/in/mohammed-alqahtani</span></span> |
+                        <span>Location: <span data-cv-field="location" contenteditable="true">Eastern Province, KSA</span></span>
+                    </div>
+                </header>
+
+                <section class="space-y-1">
+                    <h2 class="text-xs font-bold uppercase tracking-wider text-black border-b border-gray-400 pb-0.5">
+                        Professional Summary
+                    </h2>
+                    <p data-cv-field="summary" contenteditable="true" class="text-xs text-gray-800 text-justify leading-relaxed">
+                        <!-- Injected summary -->
+                    </p>
+                </section>
+
+                <section class="space-y-2">
+                    <h2 class="text-xs font-bold uppercase tracking-wider text-black border-b border-gray-400 pb-0.5">
+                        Education
+                    </h2>
+                    <div id="ats-education-container" class="space-y-2">
+                        <!-- Dynamic Education Rows -->
+                    </div>
+                </section>
+
+                <section class="space-y-2">
+                    <h2 class="text-xs font-bold uppercase tracking-wider text-black border-b border-gray-400 pb-0.5">
+                        Certifications
+                    </h2>
+                    <div id="ats-certs-container" class="space-y-1.5 text-xs text-gray-800">
+                        <!-- Dynamic Certs -->
+                    </div>
+                </section>
+
+                <section class="space-y-2">
+                    <h2 class="text-xs font-bold uppercase tracking-wider text-black border-b border-gray-400 pb-0.5">
+                        Academic Projects
+                    </h2>
+                    <div id="ats-projects-container" class="space-y-2 text-xs">
+                        <!-- Dynamic Projects -->
+                    </div>
+                </section>
+
+                <section id="ats-experience-section" class="space-y-2 hidden">
+                    <h2 class="text-xs font-bold uppercase tracking-wider text-black border-b border-gray-400 pb-0.5">
+                        Professional Experience
+                    </h2>
+                    <div id="ats-experience-container" class="space-y-2 text-xs">
+                        <!-- Dynamic Experience -->
+                    </div>
+                </section>
+
+                <section class="space-y-1">
+                    <h2 class="text-xs font-bold uppercase tracking-wider text-black border-b border-gray-400 pb-0.5">
+                        Core Competencies
+                    </h2>
+                    <p id="ats-skills-paragraph" class="text-xs text-gray-800 leading-normal">
+                        <!-- Dynamic comma split skills -->
+                    </p>
+                </section>
+
+                <section class="space-y-1">
+                    <h2 class="text-xs font-bold uppercase tracking-wider text-black border-b border-gray-400 pb-0.5">
+                        Languages
+                    </h2>
+                    <p id="ats-languages-paragraph" class="text-xs text-gray-800">
+                        <!-- Dynamic languages -->
+                    </p>
+                </section>
+            </div>
+
+            <!-- Accent Sheet Footer (Only seen on interactive screen) -->
+            <div id="bottom-accent-bar" class="absolute bottom-0 left-0 w-full h-1 theme-primary-bg no-print"></div>
+        </div>
+    </main>
+
+    <!-- JS Logic Core & Firestore Setup -->
+    <script type="module">
+        // Firebase Modular Services Integrator
+        import { initializeApp } from 'https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js';
+        import { getAuth, signInWithCustomToken, signInAnonymously } from 'https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js';
+        import { getFirestore, doc, setDoc, getDoc } from 'https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js';
+
+        // Core data structure holding entire dynamic CV configuration state
+        let cvData = {
+            firstName: "MOHAMMED",
+            lastName: "ALQAHTANI",
+            title: "Computer Information Systems student & Scrum Master",
+            phone: "+966 55 781 9629",
+            email: "qahtimjmj@gmail.com",
+            linkedin: "linkedin.com/in/mohammed-alqahtani",
+            location: "Eastern Province, KSA",
+            summary: "Motivated Computer Information Systems (CIS) student with strong analytical and problem-solving skills and a passion for technology-driven solutions. Certified Professional Scrum Master (PSM I) with experience in software development projects, database management, and structured systems analysis. Eager to bring agile collaboration expertise, database coordination, and operational design to a collaborative business or technology team.",
+            education: [
+                {
+                    institution: "Imam Abdulrahman University",
+                    degree: "Bachelor of Science in Computer Information Systems",
+                    period: "Sep 2023 - Present",
+                    details: "Key coursework: Systems Analysis & Design, Database Management Systems, Agile Project Frameworks, Software Engineering. Actively demonstrated agile collaboration workflows."
+                }
+            ],
+            certifications: [
+                {
+                    name: "Professional Scrum Master I (PSM I)",
+                    issuer: "Scrum.org"
+                }
+            ],
+            projects: [
+                {
+                    title: "Hospital Information & Scheduling System",
+                    role: "Systems Analyst & Agile Coordinator",
+                    period: "Spring 2025",
+                    details: "Modeled complete data systems architectural flow, entity relationship diagrams (ERD), and relational database schemas. Utilized Agile Scrum framework principles as Scrum Master, hosting stand-ups."
+                }
+            ],
+            experiences: [
+                {
+                    company: "CIS Student Association",
+                    role: "Agile Team Lead / Organizer",
+                    period: "2024 - Present",
+                    details: "Facilitated peer-to-peer workshops. Led cross-functional academic support initiatives using modern tasks/boards."
+                }
+            ],
+            skills: ["Problem Solving", "Analytical Thinking", "Accountability", "Microsoft Office", "Business Analysis", "Project Management", "Leadership", "Agile Management"],
+            languages: [
+                { name: "Arabic", level: "Native" },
+                { name: "English", level: "Fluent" }
+            ],
+            layout: "split", // split, classic, ats
+            themeColor: "#047857",
+            themeLight: "#ecfdf5",
+            themeDark: "#065f46"
+        };
+
+        // Cache default templates for Reset actions
+        const rawDefaultData = JSON.stringify(cvData);
+
+        // Global Firestore & Firebase handle setup
+        let db = null;
+        let auth = null;
+        const appId = typeof __app_id !== 'undefined' ? __app_id : 'mohammed-alqahtani-cv-app';
+
+        // Async Authentication Guard - Compliance with RULE 3
+        async function runCloudAuthentication() {
+            if (typeof __firebase_config !== 'undefined' && __firebase_config) {
+                try {
+                    const firebaseConfig = JSON.parse(__firebase_config);
+                    const app = initializeApp(firebaseConfig);
+                    auth = getAuth(app);
+                    db = getFirestore(app);
+
+                    // Call authentication strictly before database actions
+                    if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
+                        await signInWithCustomToken(auth, __initial_auth_token);
+                    } else {
+                        await signInAnonymously(auth);
+                    }
+                    return true;
+                } catch (e) {
+                    console.warn("Could not initiate database auth stream. Using robust local hash fallback.", e);
+                }
+            }
+            return false;
+        }
+
+        // Initialize App: Load shared configs, configure sync events, restore localStorage if any
+        window.addEventListener('load', async () => {
+            // Check cloud auth
+            const authOk = await runCloudAuthentication();
+
+            // Attempt to load from shared links first (Cloud query or Encrypted URL payload)
+            let loadedState = null;
+            
+            // Check for Cloud ID in URL query parameters (?share=xxxx)
+            const urlParams = new URLSearchParams(window.location.search);
+            const cloudShareId = urlParams.get('share');
+            
+            if (cloudShareId && authOk && db) {
+                showToast("Retrieving Shared State", "Querying global database for custom CV...", "fa-arrows-spin");
+                try {
+                    // Strict Path rule 1 compliant: artifacts/{appId}/public/data/cv_records/{docId}
+                    const docRef = doc(db, 'artifacts', appId, 'public', 'data', 'cv_records', cloudShareId);
+                    const docSnap = await getDoc(docRef);
+                    if (docSnap.exists()) {
+                        loadedState = docSnap.data();
+                        showToast("Loaded Successfully", "Visualizing shared configuration snapshot.", "fa-circle-check");
+                    } else {
+                        showToast("Link Expired", "Shared record was not found. Reverting to base values.", "fa-triangle-exclamation");
+                    }
+                } catch (err) {
+                    console.error("Firestore retrieval error:", err);
+                }
+            }
+
+            // Fallback: Check local URL hash encrypted payload (#data=xxxx)
+            if (!loadedState && window.location.hash.startsWith('#data=')) {
+                try {
+                    const base64 = window.location.hash.substring(6);
+                    const decoded = decodeURIComponent(atob(base64).split('').map(c => {
+                        return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+                    }).join(''));
+                    loadedState = JSON.parse(decoded);
+                    showToast("Loaded Snapshot", "Loaded customized layout from instant-link payload.", "fa-circle-check");
+                } catch (err) {
+                    console.warn("Local decrypt stream failed:", err);
+                }
+            }
+
+            // Fallback: Check local storage
+            if (!loadedState) {
+                const cached = localStorage.getItem('user_cv_data');
+                if (cached) {
+                    try { loadedState = JSON.parse(cached); } catch(e){}
+                }
+            }
+
+            if (loadedState) {
+                cvData = { ...cvData, ...loadedState };
+            }
+
+            // Sync visual builders & layout elements
+            syncFormsFromState();
+            syncAccentStyles();
+            renderDynamicOutputs();
+            changeLayout(cvData.layout || 'split');
+
+            // Set up live listener to capture direct-on-sheet typography edits
+            document.getElementById('resume-sheet').addEventListener('input', handleDirectSheetEdit);
+            
+            // Expose control actions globally to standard HTML DOM buttons
+            window.changeLayout = changeLayout;
+            window.changeTheme = changeTheme;
+            window.switchTab = switchTab;
+            window.toggleSection = toggleSection;
+            window.resetToSampleData = resetToSampleData;
+            
+            // Dynamic Dynamic List actions
+            window.addEducationItem = addEducationItem;
+            window.deleteEducationItem = deleteEducationItem;
+            window.addCertItem = addCertItem;
+            window.deleteCertItem = deleteCertItem;
+            window.addProjectItem = addProjectItem;
+            window.deleteProjectItem = deleteProjectItem;
+            window.addExperienceItem = addExperienceItem;
+            window.deleteExperienceItem = deleteExperienceItem;
+            window.addLanguageItem = addLanguageItem;
+            window.deleteLanguageItem = deleteLanguageItem;
+            
+            // Sharing actions
+            window.publishAndShare = publishAndShare;
+            window.toggleShareModal = toggleShareModal;
+            window.copyShareURL = copyShareURL;
+        });
+
+        // Sync visual color accents throughout elements
+        function syncAccentStyles() {
+            document.documentElement.style.setProperty('--primary-color', cvData.themeColor);
+            document.documentElement.style.setProperty('--primary-light', cvData.themeLight);
+            document.documentElement.style.setProperty('--primary-dark', cvData.themeDark);
+        }
+
+        // Apply Layout view (Split, Classic, or ATS)
+        function changeLayout(layoutName) {
+            cvData.layout = layoutName;
+            
+            const layouts = ['split', 'classic', 'ats'];
+            layouts.forEach(l => {
+                const element = document.getElementById(`layout-${l}-view`);
+                const tabButton = document.getElementById(`tab-layout-${l}`);
+                if (l === layoutName) {
+                    element.classList.remove('hidden');
+                    tabButton.className = "py-2 px-1 rounded-xl border border-emerald-500 bg-emerald-500/10 text-emerald-400 text-[10px] font-bold flex flex-col items-center justify-center space-y-1 transition";
+                } else {
+                    element.classList.add('hidden');
+                    tabButton.className = "py-2 px-1 rounded-xl border border-slate-800 bg-slate-800/50 hover:border-slate-700 text-slate-400 text-[10px] font-bold flex flex-col items-center justify-center space-y-1 transition";
+                }
+            });
+
+            // Handle aesthetic variations for clean parsing (ATS hides top bars)
+            const topBar = document.getElementById('top-accent-bar');
+            const bottomBar = document.getElementById('bottom-accent-bar');
+            const paletteControl = document.getElementById('palette-control');
+            const badge = document.getElementById('preview-layout-badge');
+
+            if (layoutName === 'ats') {
+                topBar.classList.add('hidden');
+                bottomBar.classList.add('hidden');
+                paletteControl.classList.add('opacity-30', 'pointer-events-none');
+                badge.innerText = "ATS Verified";
+                badge.className = "px-2.5 py-0.5 text-[9px] font-extrabold uppercase tracking-widest text-slate-300 bg-slate-850 border border-slate-700 rounded-full font-mono";
+            } else {
+                topBar.classList.remove('hidden');
+                bottomBar.classList.remove('hidden');
+                paletteControl.classList.remove('opacity-30', 'pointer-events-none');
+                badge.innerText = layoutName === 'split' ? "Modern Split" : "Classic Plain";
+                badge.className = "px-2.5 py-0.5 text-[9px] font-extrabold uppercase tracking-widest text-emerald-400 bg-emerald-500/10 border border-emerald-500/35 rounded-full font-mono";
+            }
+
+            // Sync structural sections visibility logic
+            syncStructuralVisibility();
+            saveStateToLocal();
+        }
+
+        // Change global design theme
+        function changeTheme(primary, light, dark) {
+            cvData.themeColor = primary;
+            cvData.themeLight = light;
+            cvData.themeDark = dark;
+            syncAccentStyles();
+            saveStateToLocal();
+        }
+
+        // Switch custom control tabs
+        function switchTab(tabId) {
+            document.querySelectorAll('.editor-tab').forEach(el => el.classList.add('hidden'));
+            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+            
+            document.getElementById(tabId).classList.remove('hidden');
+            document.getElementById(`btn-${tabId}`).classList.add('active');
+        }
+
+        // Setup the Form values on launch
+        function syncFormsFromState() {
+            document.getElementById('form-first-name').value = cvData.firstName || '';
+            document.getElementById('form-last-name').value = cvData.lastName || '';
+            document.getElementById('form-title').value = cvData.title || '';
+            document.getElementById('form-phone').value = cvData.phone || '';
+            document.getElementById('form-email').value = cvData.email || '';
+            document.getElementById('form-linkedin').value = cvData.linkedin || '';
+            document.getElementById('form-location').value = cvData.location || '';
+            document.getElementById('form-summary').value = cvData.summary || '';
+            document.getElementById('form-skills').value = (cvData.skills || []).join(', ');
+
+            // Build setup listeners to track state updates automatically
+            const bindings = [
+                { id: 'form-first-name', field: 'firstName' },
+                { id: 'form-last-name', field: 'lastName' },
+                { id: 'form-title', field: 'title' },
+                { id: 'form-phone', field: 'phone' },
+                { id: 'form-email', field: 'email' },
+                { id: 'form-linkedin', field: 'linkedin' },
+                { id: 'form-location', field: 'location' },
+                { id: 'form-summary', field: 'summary' }
+            ];
+
+            bindings.forEach(bind => {
+                const el = document.getElementById(bind.id);
+                el.oninput = (e) => {
+                    cvData[bind.field] = e.target.value;
+                    updateSheetText(bind.field, e.target.value);
+                    saveStateToLocal();
+                };
+            });
+
+            // Special mapping for skills textarea
+            document.getElementById('form-skills').oninput = (e) => {
+                cvData.skills = e.target.value.split(',').map(s => s.trim()).filter(s => s.length > 0);
+                renderSkillsList();
+                saveStateToLocal();
+            };
+        }
+
+        // Dynamically update text inside paper previews while typing inside input forms
+        function updateSheetText(fieldName, value) {
+            document.querySelectorAll(`[data-cv-field="${fieldName}"]`).forEach(el => {
+                el.innerText = value;
+            });
+        }
+
+        // Capture direct typing on the actual resume page and copy into state
+        function handleDirectSheetEdit(e) {
+            const field = e.target.getAttribute('data-cv-field');
+            if (field) {
+                const text = e.target.innerText;
+                cvData[field] = text;
+
+                // Sync with respective form field
+                let inputElement = null;
+                if (field === 'firstName') inputElement = document.getElementById('form-first-name');
+                if (field === 'lastName') inputElement = document.getElementById('form-last-name');
+                if (field === 'title') inputElement = document.getElementById('form-title');
+                if (field === 'phone') inputElement = document.getElementById('form-phone');
+                if (field === 'email') inputElement = document.getElementById('form-email');
+                if (field === 'linkedin') inputElement = document.getElementById('form-linkedin');
+                if (field === 'location') inputElement = document.getElementById('form-location');
+                if (field === 'summary') inputElement = document.getElementById('form-summary');
+
+                if (inputElement) {
+                    inputElement.value = text;
+                }
+                saveStateToLocal();
+            }
+        }
+
+        // Complete rendering of list items (Education, Projects, Experiences, Certs, Languages)
+        function renderDynamicOutputs() {
+            renderEducationList();
+            renderCertList();
+            renderProjectList();
+            renderExperienceList();
+            renderSkillsList();
+            renderLanguageList();
+            
+            // Sync all initial static text targets
+            updateSheetText('firstName', cvData.firstName);
+            updateSheetText('lastName', cvData.lastName);
+            updateSheetText('title', cvData.title);
+            updateSheetText('phone', cvData.phone);
+            updateSheetText('email', cvData.email);
+            updateSheetText('linkedin', cvData.linkedin);
+            updateSheetText('location', cvData.location);
+            updateSheetText('summary', cvData.summary);
+        }
+
+        // EDUCATION LIST HANDLERS
+        function renderEducationList() {
+            const splitCont = document.getElementById('split-education-container');
+            const classicCont = document.getElementById('classic-education-container');
+            const atsCont = document.getElementById('ats-education-container');
+            const formCont = document.getElementById('form-education-container');
+
+            splitCont.innerHTML = '';
+            classicCont.innerHTML = '';
+            atsCont.innerHTML = '';
+            formCont.innerHTML = '';
+
+            cvData.education.forEach((edu, index) => {
+                // 1. Render in Split View
+                splitCont.innerHTML += `
+                    <div class="space-y-1">
+                        <div class="flex justify-between items-start text-xs">
+                            <div>
+                                <h4 class="font-bold text-slate-900">${edu.institution}</h4>
+                                <p class="text-slate-600 font-semibold">${edu.degree}</p>
+                            </div>
+                            <span class="font-semibold text-slate-500 text-[10px] uppercase text-right flex-shrink-0">${edu.period}</span>
+                        </div>
+                        <p class="text-[11px] text-slate-500 leading-relaxed text-justify">${edu.details}</p>
+                    </div>
+                `;
+
+                // 2. Render in Classic View
+                classicCont.innerHTML += `
+                    <div class="space-y-1">
+                        <div class="flex justify-between items-start text-xs">
+                            <div>
+                                <h4 class="font-bold text-slate-900">${edu.institution}</h4>
+                                <p class="text-slate-600">${edu.degree}</p>
+                            </div>
+                            <span class="font-medium text-slate-500 text-[10px] uppercase">${edu.period}</span>
+                        </div>
+                        <p class="text-[11px] text-slate-500 leading-relaxed text-justify">${edu.details}</p>
+                    </div>
+                `;
+
+                // 3. Render in ATS View
+                atsCont.innerHTML += `
+                    <div class="space-y-0.5">
+                        <div class="flex justify-between text-xs font-bold text-black">
+                            <span>${edu.institution}</span>
+                            <span>${edu.period}</span>
+                        </div>
+                        <div class="flex justify-between text-xs italic text-gray-850">
+                            <span>${edu.degree}</span>
+                        </div>
+                        <p class="text-xs text-gray-800 leading-normal">${edu.details}</p>
+                    </div>
+                `;
+
+                // 4. Render Sidebar Form Elements
+                formCont.innerHTML += `
+                    <div class="p-3 bg-slate-950 border border-slate-800 rounded-xl space-y-2 relative group">
+                        <button onclick="deleteEducationItem(${index})" class="absolute top-2 right-2 text-slate-500 hover:text-red-400 p-1 transition">
+                            <i class="fa-solid fa-trash-can text-xs"></i>
+                        </button>
+                        <div class="text-[10px] uppercase tracking-wider font-extrabold text-slate-500">School #${index + 1}</div>
+                        <input type="text" value="${edu.institution}" placeholder="Institution" oninput="updateEduField(${index}, 'institution', this.value)" class="w-full bg-slate-900 border border-slate-800 rounded px-2.5 py-1.5 text-xs text-white focus:outline-none focus:border-emerald-500">
+                        <input type="text" value="${edu.degree}" placeholder="Degree Details" oninput="updateEduField(${index}, 'degree', this.value)" class="w-full bg-slate-900 border border-slate-800 rounded px-2.5 py-1.5 text-xs text-white focus:outline-none focus:border-emerald-500">
+                        <input type="text" value="${edu.period}" placeholder="Time Period" oninput="updateEduField(${index}, 'period', this.value)" class="w-full bg-slate-900 border border-slate-800 rounded px-2.5 py-1.5 text-xs text-white focus:outline-none focus:border-emerald-500">
+                        <textarea placeholder="Bullet details / description" oninput="updateEduField(${index}, 'details', this.value)" class="w-full bg-slate-900 border border-slate-800 rounded px-2.5 py-1.5 text-xs text-white focus:outline-none focus:border-emerald-500" rows="2">${edu.details}</textarea>
+                    </div>
+                `;
+            });
+        }
+
+        window.updateEduField = function(index, field, val) {
+            cvData.education[index][field] = val;
+            renderDynamicOutputs();
+            saveStateToLocal();
+        };
+
+        function addEducationItem() {
+            cvData.education.push({ institution: "New University", degree: "Degree / Course Title", period: "2023 - Present", details: "Describe accomplishments and credentials." });
+            renderDynamicOutputs();
+            saveStateToLocal();
+        }
+
+        function deleteEducationItem(index) {
+            cvData.education.splice(index, 1);
+            renderDynamicOutputs();
+            saveStateToLocal();
+        }
+
+        // CERTIFICATIONS LIST HANDLERS
+        function renderCertList() {
+            const splitCont = document.getElementById('split-certs-container');
+            const classicCont = document.getElementById('classic-certs-container');
+            const atsCont = document.getElementById('ats-certs-container');
+            const formCont = document.getElementById('form-cert-container');
+
+            splitCont.innerHTML = '';
+            classicCont.innerHTML = '';
+            atsCont.innerHTML = '';
+            formCont.innerHTML = '';
+
+            cvData.certifications.forEach((cert, index) => {
+                splitCont.innerHTML += `
+                    <div class="bg-slate-50 p-2 rounded-lg border border-slate-100">
+                        <div class="font-bold text-[11px] text-slate-900">${cert.name}</div>
+                        <div class="text-[10px] text-slate-500">${cert.issuer}</div>
+                    </div>
+                `;
+
+                classicCont.innerHTML += `
+                    <div class="flex items-start space-x-2">
+                        <span class="text-xs theme-primary-text mt-0.5"><i class="fa-solid fa-circle-check"></i></span>
+                        <div>
+                            <span class="font-bold text-slate-900">${cert.name}</span>
+                            <span class="text-slate-500"> - ${cert.issuer}</span>
+                        </div>
+                    </div>
+                `;
+
+                atsCont.innerHTML += `
+                    <div class="text-xs leading-normal">
+                        <strong>${cert.name}</strong> - ${cert.issuer}
+                    </div>
+                `;
+
+                formCont.innerHTML += `
+                    <div class="p-3 bg-slate-950 border border-slate-800 rounded-xl space-y-2 relative">
+                        <button onclick="deleteCertItem(${index})" class="absolute top-2 right-2 text-slate-500 hover:text-red-400 p-1 transition">
+                            <i class="fa-solid fa-trash-can text-xs"></i>
+                        </button>
+                        <input type="text" value="${cert.name}" placeholder="Certification Name" oninput="updateCertField(${index}, 'name', this.value)" class="w-full bg-slate-900 border border-slate-800 rounded px-2.5 py-1.5 text-xs text-white">
+                        <input type="text" value="${cert.issuer}" placeholder="Issuer (e.g. Scrum.org)" oninput="updateCertField(${index}, 'issuer', this.value)" class="w-full bg-slate-900 border border-slate-800 rounded px-2.5 py-1.5 text-xs text-white">
+                    </div>
+                `;
+            });
+        }
+
+        window.updateCertField = function(index, field, val) {
+            cvData.certifications[index][field] = val;
+            renderDynamicOutputs();
+            saveStateToLocal();
+        };
+
+        function addCertItem() {
+            cvData.certifications.push({ name: "Credential Title", issuer: "Issuing Authority" });
+            renderDynamicOutputs();
+            saveStateToLocal();
+        }
+
+        function deleteCertItem(index) {
+            cvData.certifications.splice(index, 1);
+            renderDynamicOutputs();
+            saveStateToLocal();
+        }
+
+        // ACADEMIC PROJECTS LIST HANDLERS
+        function renderProjectList() {
+            const splitCont = document.getElementById('split-projects-container');
+            const classicCont = document.getElementById('classic-projects-container');
+            const atsCont = document.getElementById('ats-projects-container');
+            const formCont = document.getElementById('form-project-container');
+
+            splitCont.innerHTML = '';
+            classicCont.innerHTML = '';
+            atsCont.innerHTML = '';
+            formCont.innerHTML = '';
+
+            cvData.projects.forEach((proj, index) => {
+                splitCont.innerHTML += `
+                    <div class="space-y-1">
+                        <div class="flex justify-between items-start text-xs">
+                            <div>
+                                <h4 class="font-bold text-slate-900">${proj.title}</h4>
+                                <p class="text-slate-500 italic text-[11px]">${proj.role}</p>
+                            </div>
+                            <span class="font-semibold text-slate-500 text-[10px] uppercase text-right flex-shrink-0">${proj.period}</span>
+                        </div>
+                        <p class="text-[11px] text-slate-650 leading-relaxed text-justify">${proj.details}</p>
+                    </div>
+                `;
+
+                classicCont.innerHTML += `
+                    <div class="space-y-0.5">
+                        <div class="flex justify-between font-bold text-slate-900">
+                            <span>${proj.title} <span class="font-normal text-slate-500 italic">(${proj.role})</span></span>
+                            <span class="font-medium text-slate-500 text-[10px]">${proj.period}</span>
+                        </div>
+                        <p class="text-slate-600 text-[11px] leading-relaxed text-justify">${proj.details}</p>
+                    </div>
+                `;
+
+                atsCont.innerHTML += `
+                    <div class="space-y-0.5">
+                        <div class="flex justify-between text-xs font-bold text-black">
+                            <span>${proj.title}</span>
+                            <span>${proj.period}</span>
+                        </div>
+                        <div class="text-[11px] italic text-gray-700">${proj.role}</div>
+                        <p class="text-xs text-gray-800 leading-normal">${proj.details}</p>
+                    </div>
+                `;
+
+                formCont.innerHTML += `
+                    <div class="p-3 bg-slate-950 border border-slate-800 rounded-xl space-y-2 relative">
+                        <button onclick="deleteProjectItem(${index})" class="absolute top-2 right-2 text-slate-500 hover:text-red-400 p-1 transition">
+                            <i class="fa-solid fa-trash-can text-xs"></i>
+                        </button>
+                        <input type="text" value="${proj.title}" placeholder="Project Title" oninput="updateProjField(${index}, 'title', this.value)" class="w-full bg-slate-900 border border-slate-800 rounded px-2.5 py-1.5 text-xs text-white">
+                        <input type="text" value="${proj.role}" placeholder="Your Role (e.g. Scrum Master)" oninput="updateProjField(${index}, 'role', this.value)" class="w-full bg-slate-900 border border-slate-800 rounded px-2.5 py-1.5 text-xs text-white">
+                        <input type="text" value="${proj.period}" placeholder="Time / Semester" oninput="updateProjField(${index}, 'period', this.value)" class="w-full bg-slate-900 border border-slate-800 rounded px-2.5 py-1.5 text-xs text-white">
+                        <textarea placeholder="Description of details" oninput="updateProjField(${index}, 'details', this.value)" class="w-full bg-slate-900 border border-slate-800 rounded px-2.5 py-1.5 text-xs text-white" rows="2">${proj.details}</textarea>
+                    </div>
+                `;
+            });
+        }
+
+        window.updateProjField = function(index, field, val) {
+            cvData.projects[index][field] = val;
+            renderDynamicOutputs();
+            saveStateToLocal();
+        };
+
+        function addProjectItem() {
+            cvData.projects.push({ title: "Custom Development Project", role: "Developer & Lead", period: "Fall 2025", details: "Integrated data models and applied Agile standards." });
+            renderDynamicOutputs();
+            saveStateToLocal();
+        }
+
+        function deleteProjectItem(index) {
+            cvData.projects.splice(index, 1);
+            renderDynamicOutputs();
+            saveStateToLocal();
+        }
+
+        // EXPERIENCE / PROFESSIONAL WORK HISTORY HANDLERS
+        function renderExperienceList() {
+            const splitCont = document.getElementById('split-experience-container');
+            const classicCont = document.getElementById('classic-experience-container');
+            const atsCont = document.getElementById('ats-experience-container');
+            const formCont = document.getElementById('form-experience-container');
+
+            splitCont.innerHTML = '';
+            classicCont.innerHTML = '';
+            atsCont.innerHTML = '';
+            formCont.innerHTML = '';
+
+            cvData.experiences.forEach((exp, index) => {
+                splitCont.innerHTML += `
+                    <div class="space-y-1">
+                        <div class="flex justify-between items-start text-xs">
+                            <div>
+                                <h4 class="font-bold text-slate-900">${exp.company}</h4>
+                                <p class="text-slate-500 italic text-[11px]">${exp.role}</p>
+                            </div>
+                            <span class="font-semibold text-slate-500 text-[10px] uppercase text-right flex-shrink-0">${exp.period}</span>
+                        </div>
+                        <p class="text-[11px] text-slate-650 leading-relaxed text-justify">${exp.details}</p>
+                    </div>
+                `;
+
+                classicCont.innerHTML += `
+                    <div class="space-y-0.5">
+                        <div class="flex justify-between font-bold text-slate-900">
+                            <span>${exp.company} <span class="font-normal text-slate-500 italic">(${exp.role})</span></span>
+                            <span class="font-medium text-slate-500 text-[10px]">${exp.period}</span>
+                        </div>
+                        <p class="text-slate-600 text-[11px] leading-relaxed text-justify">${exp.details}</p>
+                    </div>
+                `;
+
+                atsCont.innerHTML += `
+                    <div class="space-y-0.5">
+                        <div class="flex justify-between text-xs font-bold text-black">
+                            <span>${exp.company}</span>
+                            <span>${exp.period}</span>
+                        </div>
+                        <div class="text-[11px] italic text-gray-700">${exp.role}</div>
+                        <p class="text-xs text-gray-800 leading-normal">${exp.details}</p>
+                    </div>
+                `;
+
+                formCont.innerHTML += `
+                    <div class="p-3 bg-slate-950 border border-slate-800 rounded-xl space-y-2 relative">
+                        <button onclick="deleteExperienceItem(${index})" class="absolute top-2 right-2 text-slate-500 hover:text-red-400 p-1 transition">
+                            <i class="fa-solid fa-trash-can text-xs"></i>
+                        </button>
+                        <input type="text" value="${exp.company}" placeholder="Organization / Company" oninput="updateExpField(${index}, 'company', this.value)" class="w-full bg-slate-900 border border-slate-800 rounded px-2.5 py-1.5 text-xs text-white">
+                        <input type="text" value="${exp.role}" placeholder="Title / Role" oninput="updateExpField(${index}, 'role', this.value)" class="w-full bg-slate-900 border border-slate-800 rounded px-2.5 py-1.5 text-xs text-white">
+                        <input type="text" value="${exp.period}" placeholder="Timeperiod" oninput="updateExpField(${index}, 'period', this.value)" class="w-full bg-slate-900 border border-slate-800 rounded px-2.5 py-1.5 text-xs text-white">
+                        <textarea placeholder="Job descriptions" oninput="updateExpField(${index}, 'details', this.value)" class="w-full bg-slate-900 border border-slate-800 rounded px-2.5 py-1.5 text-xs text-white" rows="2">${exp.details}</textarea>
+                    </div>
+                `;
+            });
+
+            syncStructuralVisibility();
+        }
+
+        // Keep sections hidden if empty of elements
+        function syncStructuralVisibility() {
+            const splitSect = document.getElementById('split-experience-section');
+            const classicSect = document.getElementById('classic-experience-section');
+            const atsSect = document.getElementById('ats-experience-section');
+
+            const hasExp = cvData.experiences && cvData.experiences.length > 0;
+
+            if (hasExp) {
+                splitSect.classList.remove('hidden');
+                classicSect.classList.remove('hidden');
+                atsSect.classList.remove('hidden');
+            } else {
+                splitSect.classList.add('hidden');
+                classicSect.classList.add('hidden');
+                atsSect.classList.add('hidden');
+            }
+        }
+
+        window.updateExpField = function(index, field, val) {
+            cvData.experiences[index][field] = val;
+            renderDynamicOutputs();
+            saveStateToLocal();
+        };
+
+        function addExperienceItem() {
+            cvData.experiences.push({ company: "New Association", role: "Operational Facilitator", period: "2024", details: "Coordinated sprints and monitored process pipelines." });
+            renderDynamicOutputs();
+            saveStateToLocal();
+        }
+
+        function deleteExperienceItem(index) {
+            cvData.experiences.splice(index, 1);
+            renderDynamicOutputs();
+            saveStateToLocal();
+        }
+
+        // CORE SKILLS DISPLAY LOGIC
+        function renderSkillsList() {
+            const splitCont = document.getElementById('split-skills-badges');
+            const classicCont = document.getElementById('classic-skills-container');
+            const atsPara = document.getElementById('ats-skills-paragraph');
+
+            splitCont.innerHTML = '';
+            classicCont.innerHTML = '';
+            
+            if (cvData.skills.length === 0) {
+                atsPara.innerHTML = 'None entered.';
+                return;
+            }
+
+            cvData.skills.forEach(skill => {
+                splitCont.innerHTML += `
+                    <span class="text-[10px] font-bold tracking-wide bg-slate-100 text-slate-800 px-2.5 py-1 rounded-md border border-slate-200/40">${skill}</span>
+                `;
+
+                classicCont.innerHTML += `
+                    <div class="flex items-center space-x-2">
+                        <span class="w-1.5 h-1.5 rounded-full theme-primary-bg flex-shrink-0"></span>
+                        <span class="truncate">${skill}</span>
+                    </div>
+                `;
+            });
+
+            // ATS utilizes plain text comma separated formatting
+            atsPara.innerHTML = `<strong>Skills:</strong> ${cvData.skills.join(', ')}.`;
+        }
+
+        // LANGUAGES MANAGER LOGIC
+        function renderLanguageList() {
+            const splitCont = document.getElementById('split-languages-container');
+            const classicPara = document.getElementById('classic-languages-paragraph');
+            const atsPara = document.getElementById('ats-languages-paragraph');
+            const formCont = document.getElementById('form-language-container');
+
+            splitCont.innerHTML = '';
+            formCont.innerHTML = '';
+
+            let strArr = [];
+            cvData.languages.forEach((lang, index) => {
+                splitCont.innerHTML += `
+                    <div class="flex justify-between items-center text-xs">
+                        <span class="font-semibold text-slate-800">${lang.name}</span>
+                        <span class="text-[10px] font-bold tracking-wider theme-accent-bg theme-primary-text px-2 py-0.5 rounded-full uppercase">${lang.level}</span>
+                    </div>
+                `;
+
+                strArr.push(`<strong>${lang.name}</strong> (${lang.level})`);
+
+                formCont.innerHTML += `
+                    <div class="p-2.5 bg-slate-950 border border-slate-800 rounded-lg flex items-center justify-between space-x-2">
+                        <input type="text" value="${lang.name}" placeholder="Language" oninput="updateLangField(${index}, 'name', this.value)" class="w-1/2 bg-slate-900 border border-slate-800 rounded px-2 py-1 text-xs text-white">
+                        <input type="text" value="${lang.level}" placeholder="Level" oninput="updateLangField(${index}, 'level', this.value)" class="w-1/3 bg-slate-900 border border-slate-800 rounded px-2 py-1 text-xs text-white">
+                        <button onclick="deleteLanguageItem(${index})" class="text-slate-500 hover:text-red-400 p-1 transition">
+                            <i class="fa-solid fa-trash-can text-xs"></i>
+                        </button>
+                    </div>
+                `;
+            });
+
+            const paragraphHTML = strArr.join(' &nbsp;|&nbsp; ');
+            classicPara.innerHTML = paragraphHTML || 'None declared.';
+            atsPara.innerHTML = strArr.join(', ') || 'None declared.';
+        }
+
+        window.updateLangField = function(index, field, val) {
+            cvData.languages[index][field] = val;
+            renderDynamicOutputs();
+            saveStateToLocal();
+        };
+
+        function addLanguageItem() {
+            cvData.languages.push({ name: "Language", level: "Fluent" });
+            renderDynamicOutputs();
+            saveStateToLocal();
+        }
+
+        function deleteLanguageItem(index) {
+            cvData.languages.splice(index, 1);
+            renderDynamicOutputs();
+            saveStateToLocal();
+        }
+
+        // Section visual toggle helpers
+        function toggleSection(sectionId) {
+            const target = document.getElementById(sectionId);
+            if (target) {
+                target.classList.toggle('hidden');
+                showToast("Section Toggled", `Swapped visibility state of requested elements.`);
+            }
+        }
+
+        // Clear local inputs and restore Mohammed Alqahtani base CV configuration
+        function resetToSampleData() {
+            cvData = JSON.parse(rawDefaultData);
+            localStorage.removeItem('user_cv_data');
+            
+            // Sync
+            syncFormsFromState();
+            syncAccentStyles();
+            renderDynamicOutputs();
+            changeLayout('split');
+            
+            showToast("System Reset Completed", "Reloaded original base credentials & layouts.", "fa-arrow-rotate-left");
+        }
+
+        // Auto-save edited data to Local Storage
+        function saveStateToLocal() {
+            try {
+                localStorage.setItem('user_cv_data', JSON.stringify(cvData));
+            } catch (err) {
+                console.warn("Storage limits triggered.", err);
+            }
+        }
+
+        // UI Toast Engine
+        function showToast(title, msg, iconClass = "fa-circle-check") {
+            const toast = document.getElementById('toast-notification');
+            const titleEl = document.getElementById('toast-title');
+            const msgEl = document.getElementById('toast-message');
+            const iconEl = document.getElementById('toast-icon');
+
+            titleEl.innerText = title;
+            msgEl.innerText = msg;
+            iconEl.innerHTML = `<i class="fa-solid ${iconClass}"></i>`;
+
+            toast.classList.remove('translate-x-80', 'opacity-0');
+            toast.classList.add('translate-x-0', 'opacity-100');
+
+            setTimeout(() => {
+                toast.classList.remove('translate-x-0', 'opacity-100');
+                toast.classList.add('translate-x-80', 'opacity-0');
+            }, 4000);
+        }
+
+        // Toggle Share Modal
+        function toggleShareModal(visible) {
+            const modal = document.getElementById('share-modal');
+            if (visible) {
+                modal.classList.remove('hidden');
+            } else {
+                modal.classList.add('hidden');
+            }
+        }
+
+        // CLOUD SYNC & LINK GENERATION (RULE 1, 2, 3 Compliant)
+        async function publishAndShare() {
+            const modalInput = document.getElementById('share-url-input');
+            modalInput.value = "Creating link snapshot...";
+            toggleShareModal(true);
+
+            let shareSuccess = false;
+            let shareId = "share-" + Date.now();
+
+            // 1. Try Firestore save if initialized
+            if (db && auth) {
+                try {
+                    // Rule 1 strictly followed: artifacts/{appId}/public/data/cv_records/{docId}
+                    const docRef = doc(db, 'artifacts', appId, 'public', 'data', 'cv_records', shareId);
+                    await setDoc(docRef, cvData);
+                    
+                    const liveURL = `${window.location.origin}${window.location.pathname}?share=${shareId}`;
+                    modalInput.value = liveURL;
+                    shareSuccess = true;
+                } catch (e) {
+                    console.warn("Database storage failed. Initializing instant-link fallback.", e);
+                }
+            }
+
+            // 2. Fallback to robust compressed URL hash payload if Firestore failed or is offline
+            if (!shareSuccess) {
+                try {
+                    const jsonStr = JSON.stringify(cvData);
+                    const base64 = btoa(encodeURIComponent(jsonStr).replace(/%([0-9A-F]{2})/g, (match, p1) => {
+                        return String.fromCharCode('0x' + p1);
+                    }));
+                    const hashLink = `${window.location.origin}${window.location.pathname}#data=${base64}`;
+                    modalInput.value = hashLink;
+                    shareSuccess = true;
+                } catch (err) {
+                    modalInput.value = "Sharing Error";
+                    showToast("Encoding Failed", "Could not assemble custom share link.", "fa-triangle-exclamation");
+                    return;
+                }
+            }
+
+            // Copy automatically to clipboard using rule fallback logic
+            copyShareURL();
+        }
+
+        // Clipboard Copy Action - Support non-navigator sandbox fallbacks
+        function copyShareURL() {
+            const input = document.getElementById('share-url-input');
+            
+            // Execute legacy select & copy command
+            input.select();
+            input.setSelectionRange(0, 99999); /* For mobile devices */
+
+            let success = false;
+            try {
+                success = document.execCommand('copy');
+            } catch (err) {
+                console.warn("Legacy copy failed:", err);
+            }
+
+            if (success) {
+                showToast("Link Copied!", "A live snapshot link has been copied to your clipboard.", "fa-share-nodes");
+            } else {
+                showToast("Select To Copy", "Manually copy the highlighted URL from the input box.", "fa-arrow-pointer");
+            }
+        }
+    </script>
+</body>
+</html>
